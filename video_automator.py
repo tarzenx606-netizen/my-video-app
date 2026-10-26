@@ -6,7 +6,7 @@ from config import *
 
 from PIL import Image
 from moviepy.editor import (VideoFileClip, AudioFileClip, concatenate_videoclips,
-                            TextClip, CompositeVideoClip, ColorClip, VideoClip)
+                            TextClip, CompositeVideoClip, VideoClip)
 import numpy as np
 import requests
 
@@ -46,11 +46,11 @@ def make_script(topic):
 
 # ---------------- STEP 2: VOICEOVER ----------------
 def make_voiceover(lines, path="temp_voice.mp3"):
-    import pyttsx3
-    engine = pyttsx3.init()
-    engine.setProperty("rate", 165)
-    engine.save_to_file(". ".join(lines), path)
-    engine.runAndWait()
+    import asyncio, edge_tts
+    async def gen():
+        communicate = edge_tts.Communicate(". ".join(lines), "en-US-GuyNeural")
+        await communicate.save(path)
+    asyncio.run(gen())
     return path
 
 # ---------------- STEP 3: CLIPS ----------------
